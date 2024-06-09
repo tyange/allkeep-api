@@ -1,17 +1,16 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/tyange/triplework-backend/db"
+	"github.com/tyange/triplework-backend/routes"
 )
 
 func main() {
+	db.InitDB()
 	server := gin.Default()
 
-	server.GET("/snooze", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{"message": "Snooooze"})
-	})
+	routes.RegisterRoutes(server)
 
 	server.Run(":8080")
 }
