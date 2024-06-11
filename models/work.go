@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/tyange/triplework-backend/db"
+	"github.com/tyange/white-shadow-api/db"
 )
 
 type Work struct {
@@ -13,7 +13,7 @@ type Work struct {
 	UserID      int64     `json:"user_id"`
 }
 
-func (w *Work) Start() error {
+func (w *Work) Save() error {
 	query := `
 	INSERT INTO works(start_at, company_name, user_id)
 	VALUES (?, ?, ?)

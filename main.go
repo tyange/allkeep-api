@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/tyange/triplework-backend/db"
-	"github.com/tyange/triplework-backend/routes"
+	"github.com/tyange/white-shadow-api/db"
+	"github.com/tyange/white-shadow-api/routes"
 )
 
 func main() {

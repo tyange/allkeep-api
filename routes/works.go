@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tyange/triplework-backend/models"
+	"github.com/tyange/white-shadow-api/models"
 )
 
-func workStart(context *gin.Context) {
+func workSave(context *gin.Context) {
 	var work models.Work
 	err := context.ShouldBindBodyWithJSON(&work)
 
@@ -21,7 +21,7 @@ func workStart(context *gin.Context) {
 	userId := 1
 	work.UserID = int64(userId)
 
-	err = work.Start()
+	err = work.Save()
 
 	if err != nil {
 		fmt.Println(err)

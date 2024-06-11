@@ -1,4 +1,4 @@
-module github.com/tyange/triplework-backend
+module github.com/tyange/white-shadow-api
 
 go 1.22.3
 

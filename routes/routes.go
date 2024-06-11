@@ -6,5 +6,8 @@ import (
 
 func RegisterRoutes(server *gin.Engine) {
 	work := server.Group("/work")
-	work.POST("/start", workStart)
+	work.POST("/save", workSave)
+
+	auth := server.Group("/auth")
+	auth.POST("/signup", signup)
 }
