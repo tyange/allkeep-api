@@ -6,6 +6,9 @@ import (
 )
 
 func RegisterRoutes(server *gin.Engine) {
+	// TODO: get work
+	// TODO: edit work
+	// TODO: delete work
 	work := server.Group("/work")
 	work.Use(middlewares.Authenticate)
 	work.POST("/create", createWork)
@@ -14,6 +17,9 @@ func RegisterRoutes(server *gin.Engine) {
 	auth.POST("/signup", signup)
 	auth.POST("/login", login)
 
+	// TODO: get company
+	// TODO: edit company
+	// TODO: delete company
 	company := server.Group("/company")
 	company.Use(middlewares.Authenticate)
 	company.POST("/create", createCompany)
