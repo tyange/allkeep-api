@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ func signup(context *gin.Context) {
 	err := context.ShouldBindBodyWithJSON(&user)
 
 	if err != nil {
+		fmt.Println(err)
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data."})
 		return
 	}
@@ -20,6 +22,7 @@ func signup(context *gin.Context) {
 	err = user.Save()
 
 	if err != nil {
+		fmt.Println(err)
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not save user."})
 		return
 	}

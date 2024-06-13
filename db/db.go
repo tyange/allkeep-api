@@ -51,4 +51,18 @@ func createTables() {
 	if err != nil {
 		panic("Could not create works table.")
 	}
+
+	createCompaniesTable := `
+	CREATE TABLE IF NOT EXISTS companies (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		company_name TEXT NOT NULL,
+		user_id INTEGER NOT NULL
+	)
+	`
+
+	_, err = DB.Exec(createCompaniesTable)
+
+	if err != nil {
+		panic("Could not create companies table.")
+	}
 }
