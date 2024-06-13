@@ -8,7 +8,7 @@ import (
 	"github.com/tyange/white-shadow-api/models"
 )
 
-func workSave(context *gin.Context) {
+func createWork(context *gin.Context) {
 	var work models.Work
 	err := context.ShouldBindBodyWithJSON(&work)
 
@@ -29,5 +29,5 @@ func workSave(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"message": "work created", "work": work})
+	context.JSON(http.StatusCreated, gin.H{"message": "work created.", "work": work})
 }
