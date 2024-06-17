@@ -16,6 +16,7 @@ func RegisterRoutes(server *gin.Engine) {
 	auth := server.Group("/auth")
 	auth.POST("/signup", signup)
 	auth.POST("/login", login)
+	auth.POST("/google", googleLoginCallBack)
 
 	// TODO: get company
 	// TODO: edit company
