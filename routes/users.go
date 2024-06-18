@@ -137,9 +137,11 @@ func googleLoginCallBack(context *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error unmarshaling JSON."})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error unmarshaling user info to JSON."})
 		return
 	}
 
+	// TODO: 응답된 userInfo의 email을 확인해서 db에 동일한 email이 있으면 로그인 처리
+	// TODO: 동일한 email이 없을 경우 db에 유저를 등록, 로그인 처리
 	context.JSON(http.StatusOK, gin.H{"message": "get user info successfully!", "user_info": userInfo})
 }
