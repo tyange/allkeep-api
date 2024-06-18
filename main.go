@@ -15,6 +15,7 @@ func main() {
 	config.AllowAllOrigins = true
 	config.AllowHeaders = []string{
 		"Authorization",
+		"Content-Type",
 	}
 
 	server.Use(cors.New(config))
