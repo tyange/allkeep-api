@@ -42,6 +42,29 @@ func (u *User) Save() error {
 	return err
 }
 
+func (u *User) SaveWithoutPassword() error {
+	query := `INSERT INTO users(email) VALUES (?)`
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	result, err := stmt.Exec(u.Email)
+
+	if err != nil {
+		return err
+	}
+
+	userId, err := result.LastInsertId()
+
+	u.ID = userId
+
+	return err
+}
+
 func (u *User) ValidateCredentials() error {
 	query := "SELECT id, password FROM users WHERE email = ?"
 	row := db.DB.QueryRow(query, u.Email)
@@ -60,4 +83,13 @@ func (u *User) ValidateCredentials() error {
 	}
 
 	return nil
+}
+
+func (u *User) CheckDuplicateUserId() bool {
+	query := "SELECT id FROM users WHERE email = ?"
+	row := db.DB.QueryRow(query, u.Email)
+
+	err := row.Scan(&u.ID)
+
+	return err == nil
 }

@@ -132,7 +132,6 @@ func googleLoginCallBack(context *gin.Context) {
 	}
 
 	var userInfo UserInfo
-
 	err = json.Unmarshal(body, &userInfo)
 
 	if err != nil {
@@ -141,7 +140,23 @@ func googleLoginCallBack(context *gin.Context) {
 		return
 	}
 
-	// TODO: 응답된 userInfo의 email을 확인해서 db에 동일한 email이 있으면 로그인 처리
-	// TODO: 동일한 email이 없을 경우 db에 유저를 등록, 로그인 처리
-	context.JSON(http.StatusOK, gin.H{"message": "get user info successfully!", "user_info": userInfo})
+	var user models.User
+	user.Email = userInfo.Email
+
+	isDupicated := user.CheckDuplicateUserId()
+
+	if !isDupicated {
+		err := user.SaveWithoutPassword()
+
+		if err != nil {
+			fmt.Println(err)
+			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not created user with google-login."})
+			return
+		}
+
+		context.JSON(http.StatusCreated, gin.H{"message": "Save user from google info."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Google login successfully!"})
 }
