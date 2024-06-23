@@ -106,14 +106,14 @@ func googleLoginCallBack(context *gin.Context) {
 		return
 	}
 
-	token, err := oauthConfig.Exchange(context, code["code"])
+	googleLoginToken, err := oauthConfig.Exchange(context, code["code"])
 	if err != nil {
 		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not get a token from code."})
 		return
 	}
 
-	client := oauthConfig.Client(context, token)
+	client := oauthConfig.Client(context, googleLoginToken)
 
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
@@ -143,20 +143,36 @@ func googleLoginCallBack(context *gin.Context) {
 	var user models.User
 	user.Email = userInfo.Email
 
-	isDupicated := user.CheckDuplicateUserId()
+	isDuplicated := user.CheckDuplicateUserId()
 
-	if !isDupicated {
+	if !isDuplicated {
 		err := user.SaveWithoutPassword()
 
 		if err != nil {
 			fmt.Println(err)
-			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not created user with google-login."})
+			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not created user with google login."})
 			return
 		}
 
-		context.JSON(http.StatusCreated, gin.H{"message": "Save user from google info."})
+		token, err := utils.GenerateToken(user.Email, user.ID)
+
+		if err != nil {
+			fmt.Println(err)
+			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not created token with google login."})
+			return
+		}
+
+		context.JSON(http.StatusCreated, gin.H{"message": "Save user from google info.", "token": token})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "Google login successfully!"})
+	token, err := utils.GenerateToken(user.Email, user.ID)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not created token with google login."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Google login successfully!", "token": token})
 }
