@@ -13,6 +13,9 @@ func RegisterRoutes(server *gin.Engine) {
 	work.Use(middlewares.Authenticate)
 	work.POST("/create", createWork)
 
+	// TODO: get user info
+	// TODO: edit user info
+	// TODO: delete user
 	auth := server.Group("/auth")
 	auth.POST("/signup", signup)
 	auth.POST("/login", login)
