@@ -18,6 +18,7 @@ func createCompany(context *gin.Context) {
 		return
 	}
 
+	// auth middleware에서 만든 "userId" 데이터를 사용.
 	userId := context.GetInt64("userId")
 	company.UserID = userId
 

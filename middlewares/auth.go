@@ -22,6 +22,7 @@ func Authenticate(context *gin.Context) {
 		return
 	}
 
+	// 동일한 요청에 대해서 특정 데이터를 만들어 사용하는 것이 가능함.
 	context.Set("userId", userId)
 	context.Next()
 }
