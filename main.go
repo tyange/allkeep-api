@@ -12,11 +12,12 @@ func main() {
 	server := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
+	config.AllowOrigins = []string{"http://localhost:5173"}
 	config.AllowHeaders = []string{
 		"Authorization",
 		"Content-Type",
 	}
+	config.AllowCredentials = true
 
 	server.Use(cors.New(config))
 

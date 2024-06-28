@@ -94,7 +94,8 @@ func login(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "Login successful!", "token": token})
+	context.SetCookie("session", token, 60*60*2, "/", "localhost", false, false)
+	context.JSON(http.StatusOK, gin.H{"message": "Login successful!"})
 }
 
 func googleLoginCallBack(context *gin.Context) {
