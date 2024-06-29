@@ -10,7 +10,7 @@ func RegisterRoutes(server *gin.Engine) {
 	// TODO: get works
 	// TODO: edit work
 	// TODO: delete work, work에 대한 id를 storage에 저장하고 있다가 재설정을 누르면 해당 id의 work를 삭제.
-	work := server.Group("/work")
+	work := server.Group("/works")
 	work.Use(middlewares.Authenticate)
 	work.POST("/create", createWork)
 
@@ -26,7 +26,7 @@ func RegisterRoutes(server *gin.Engine) {
 	// TODO: get company
 	// TODO: edit company
 	// TODO: delete company
-	company := server.Group("/company")
+	company := server.Group("/companies")
 	company.Use(middlewares.Authenticate)
 	company.POST("/create", createCompany)
 }
