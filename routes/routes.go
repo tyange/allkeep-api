@@ -12,6 +12,7 @@ func RegisterRoutes(server *gin.Engine) {
 	// TODO: delete work, work에 대한 id를 storage에 저장하고 있다가 재설정을 누르면 해당 id의 work를 삭제.
 	work := server.Group("/works")
 	work.Use(middlewares.Authenticate)
+	work.GET("/all", getWorksByUserId)
 	work.POST("/create", createWork)
 
 	// TODO: get user info

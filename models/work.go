@@ -39,3 +39,32 @@ func (w *Work) Save() error {
 
 	return err
 }
+
+func GetAllWorksByUserId(userId *int64) ([]Work, error) {
+	query := "SELECT * FROM works WHERE user_id = ?"
+	rows, err := db.DB.Query(query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var works []Work
+	var startAtString string
+
+	for rows.Next() {
+		var work Work
+		err := rows.Scan(&work.ID, &startAtString, &work.CompanyName, &work.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		work.StartAt, err = time.Parse("2006-01-02 15:04:05.000-07:00", startAtString)
+		if err != nil {
+			return nil, err
+		}
+
+		works = append(works, work)
+	}
+
+	return works, nil
+}

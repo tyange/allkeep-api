@@ -8,6 +8,19 @@ import (
 	"github.com/tyange/white-shadow-api/models"
 )
 
+func getWorksByUserId(context *gin.Context) {
+	userId := context.GetInt64("userId")
+
+	works, err := models.GetAllWorksByUserId(&userId)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch works. Try again later."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "get all works by user.", "works": works})
+}
+
 func createWork(context *gin.Context) {
 	var work models.Work
 	err := context.ShouldBindBodyWithJSON(&work)
