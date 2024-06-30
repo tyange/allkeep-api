@@ -30,3 +30,26 @@ func (c *Company) Save() error {
 
 	return err
 }
+
+func GetAllCompanyByUserId(userId *int64) ([]Company, error) {
+	query := "SELECT * FROM companies WHERE user_id = ?"
+	rows, err := db.DB.Query(query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var companies []Company
+
+	for rows.Next() {
+		var company Company
+		err := rows.Scan(&company.ID, &company.CompanyName, &company.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		companies = append(companies, company)
+	}
+
+	return companies, nil
+}

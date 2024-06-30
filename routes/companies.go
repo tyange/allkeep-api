@@ -8,6 +8,18 @@ import (
 	"github.com/tyange/white-shadow-api/models"
 )
 
+func getCompaniesByUserId(context *gin.Context) {
+	userId := context.GetInt64("userId")
+
+	companies, err := models.GetAllCompanyByUserId(&userId)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch companies. Try again later."})
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "get all companies by user.", "companies": companies})
+}
+
 func createCompany(context *gin.Context) {
 	var company models.Company
 	err := context.ShouldBindBodyWithJSON(&company)

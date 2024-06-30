@@ -29,5 +29,6 @@ func RegisterRoutes(server *gin.Engine) {
 	// TODO: delete company
 	company := server.Group("/companies")
 	company.Use(middlewares.Authenticate)
+	company.GET("/all", getCompaniesByUserId)
 	company.POST("/create", createCompany)
 }
