@@ -60,6 +60,16 @@ func GetAllCompanyByUserId(userId *int64, pageSize *int64, pageNum *int64) ([]Co
 	return companies, nil
 }
 
+func GetCompanyCountByUserId(userId *int64) (int64, error) {
+	query := "SELECT COUNT(*) FROM companies WHERE user_id = ?"
+	var count int64
+	err := db.DB.QueryRow(query, userId).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func GetCompanyById(userId *int64) (*Company, error) {
 	query := "SELECT * FROM companies WHERE id = ?"
 	row := db.DB.QueryRow(query, userId)

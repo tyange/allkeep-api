@@ -1,0 +1,2 @@
+GET http://localhost:8080/companies/all/count/4
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJleHAiOjE3MjAxMDY5MjksInVzZXJJZCI6Mn0.Xjo0lmrP6QbI9OztDQKFnG_ghtdqeVbweydR29gOhC8

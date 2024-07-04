@@ -26,9 +26,31 @@ func getCompaniesByUserId(context *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch companies. Try again later."})
+		return
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "get all companies by user.", "companies": companies})
+}
+
+func getTotalPageCount(context *gin.Context) {
+	userId := context.GetInt64("userId")
+
+	pageSize, err := strconv.ParseInt(context.Param("pageSize"), 10, 64)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse page size."})
+		return
+	}
+
+	count, err := models.GetCompanyCountByUserId(&userId)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch company count. Try again later."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "get company count by user.", "totalPageCount": (count / pageSize) + 1})
 }
 
 func createCompany(context *gin.Context) {
