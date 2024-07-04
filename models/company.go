@@ -1,6 +1,10 @@
 package models
 
-import "github.com/tyange/white-shadow-api/db"
+import (
+	"fmt"
+
+	"github.com/tyange/white-shadow-api/db"
+)
 
 type Company struct {
 	ID          int64
@@ -31,9 +35,11 @@ func (c *Company) Save() error {
 	return err
 }
 
-func GetAllCompanyByUserId(userId *int64) ([]Company, error) {
-	query := "SELECT * FROM companies WHERE user_id = ?"
-	rows, err := db.DB.Query(query, userId)
+func GetAllCompanyByUserId(userId *int64, pageSize *int64, pageNum *int64) ([]Company, error) {
+	offset := (*pageNum - 1) * *pageSize
+	fmt.Println(offset)
+	query := "SELECT * FROM companies WHERE user_id = ? LIMIT ? OFFSET ?"
+	rows, err := db.DB.Query(query, userId, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}

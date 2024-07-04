@@ -12,7 +12,17 @@ import (
 func getCompaniesByUserId(context *gin.Context) {
 	userId := context.GetInt64("userId")
 
-	companies, err := models.GetAllCompanyByUserId(&userId)
+	pageSize, err := strconv.ParseInt(context.Query("pageSize"), 10, 64)
+	if err != nil || pageSize <= 0 {
+		pageSize = 4
+	}
+
+	pageNum, err := strconv.ParseInt(context.Query(("pageNum")), 10, 64)
+	if err != nil || pageNum <= 0 {
+		pageNum = 1
+	}
+
+	companies, err := models.GetAllCompanyByUserId(&userId, &pageSize, &pageNum)
 	if err != nil {
 		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch companies. Try again later."})

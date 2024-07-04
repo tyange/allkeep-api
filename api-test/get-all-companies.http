@@ -1,0 +1,2 @@
+GET http://localhost:8080/companies/all
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJleHAiOjE3MjAwOTgwNDgsInVzZXJJZCI6Mn0.cyiSj02bNkeKpnjf5VObK7ot9tLSKh_nTWoa8M2YZY4
