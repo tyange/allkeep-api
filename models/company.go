@@ -53,3 +53,34 @@ func GetAllCompanyByUserId(userId *int64) ([]Company, error) {
 
 	return companies, nil
 }
+
+func GetCompanyById(userId *int64) (*Company, error) {
+	query := "SELECT * FROM companies WHERE id = ?"
+	row := db.DB.QueryRow(query, userId)
+
+	var company Company
+	err := row.Scan(&company.ID, &company.CompanyName, &company.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &company, nil
+}
+
+func (company Company) Update() error {
+	query := `
+	UPDATE companies
+	SET company_name = ?
+	WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(company.CompanyName, company.ID)
+	return err
+}

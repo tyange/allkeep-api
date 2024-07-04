@@ -71,6 +71,8 @@ func signup(context *gin.Context) {
 }
 
 func login(context *gin.Context) {
+	fmt.Println("hi")
+
 	var user models.User
 
 	err := context.ShouldBindBodyWithJSON(&user)

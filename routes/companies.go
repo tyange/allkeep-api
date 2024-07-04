@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tyange/white-shadow-api/models"
@@ -42,4 +43,48 @@ func createCompany(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusCreated, gin.H{"message": "company created.", "company": company})
+}
+
+func updateCompany(context *gin.Context) {
+	companyId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse company id."})
+		return
+	}
+
+	userId := context.GetInt64("userId")
+	company, err := models.GetCompanyById(&companyId)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch the company. Try again later."})
+		return
+	}
+
+	if company.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized to update company."})
+		return
+	}
+
+	var updatedCompany models.Company
+	err = context.ShouldBindBodyWithJSON(&updatedCompany)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": "could not parse request data"})
+		return
+	}
+
+	updatedCompany.ID = companyId
+	err = updatedCompany.Update()
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not update the event. Try again later."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Company updated successfully!"})
 }
