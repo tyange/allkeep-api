@@ -1,0 +1,7 @@
+PUT http://localhost:8080/companies/1
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJleHAiOjE3MjAwOTgwNDgsInVzZXJJZCI6Mn0.cyiSj02bNkeKpnjf5VObK7ot9tLSKh_nTWoa8M2YZY4
+
+{
+    "company_name": "ikea-test"
+}
