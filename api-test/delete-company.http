@@ -1,0 +1,7 @@
+PUT http://localhost:8080/companies/1
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJleHAiOjE3MjAxOTEyNjgsInVzZXJJZCI6Mn0.9iFtVV5wpq1VTAE-3ac_itQqr9pNS6Xu91R-fXEg7as
+
+{
+    "company_id": "1"
+}

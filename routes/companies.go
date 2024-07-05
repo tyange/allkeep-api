@@ -22,14 +22,14 @@ func getCompaniesByUserId(context *gin.Context) {
 		pageNum = 1
 	}
 
-	companies, err := models.GetAllCompanyByUserId(&userId, &pageSize, &pageNum)
+	data, err := models.GetAllCompanyByUserId(&userId, &pageSize, &pageNum)
 	if err != nil {
 		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch companies. Try again later."})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "get all companies by user.", "companies": companies})
+	context.JSON(http.StatusOK, gin.H{"message": "get all companies by user.", "data": *data})
 }
 
 func getTotalPageCount(context *gin.Context) {
@@ -119,4 +119,37 @@ func updateCompany(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Company updated successfully!"})
+}
+
+func deleteCompany(context *gin.Context) {
+	companyId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse company id."})
+		return
+	}
+
+	userId := context.GetInt64("userId")
+	company, err := models.GetCompanyById(&companyId)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch the company. Try again later."})
+		return
+	}
+
+	if company.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized to update company."})
+		return
+	}
+
+	err = company.Delete()
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not delete the company."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Company delete successfully!"})
 }

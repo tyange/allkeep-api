@@ -30,7 +30,7 @@ func RegisterRoutes(server *gin.Engine) {
 	company := server.Group("/companies")
 	company.Use(middlewares.Authenticate)
 	company.GET("/all", getCompaniesByUserId)
-	company.GET("/all/count/:pageSize", getTotalPageCount)
 	company.POST("/create", createCompany)
 	company.PUT("/:id", updateCompany)
+	company.DELETE("/:id", deleteCompany)
 }
