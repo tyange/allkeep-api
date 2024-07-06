@@ -30,6 +30,7 @@ func RegisterRoutes(server *gin.Engine) {
 	company := server.Group("/companies")
 	company.Use(middlewares.Authenticate)
 	company.GET("/all", getCompaniesByUserId)
+	company.GET("/all-at-once", getAllCompaniesByUserId)
 	company.POST("/create", createCompany)
 	company.PUT("/:id", updateCompany)
 	company.DELETE("/:id", deleteCompany)

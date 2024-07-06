@@ -38,7 +38,7 @@ func (c *Company) Save() error {
 	return err
 }
 
-func GetAllCompanyByUserId(userId *int64, pageSize *int64, pageNum *int64) (*AllCompanyResponseData, error) {
+func GetCompaniesByUserIdWithPage(userId *int64, pageSize *int64, pageNum *int64) (*AllCompanyResponseData, error) {
 	offset := (*pageNum - 1) * *pageSize
 	companiesQuery := "SELECT * FROM companies WHERE user_id = ? LIMIT ? OFFSET ?"
 	rows, err := db.DB.Query(companiesQuery, userId, pageSize, offset)
@@ -71,14 +71,27 @@ func GetAllCompanyByUserId(userId *int64, pageSize *int64, pageNum *int64) (*All
 	return &data, nil
 }
 
-func GetCompanyCountByUserId(userId *int64) (int64, error) {
-	query := "SELECT COUNT(*) FROM companies WHERE user_id = ?"
-	var count int64
-	err := db.DB.QueryRow(query, userId).Scan(&count)
+func GetCompaniesByUserId(userId *int64) ([]Company, error) {
+	query := "SELECT * FROM companies WHERE user_id = ?"
+	rows, err := db.DB.Query(query, userId)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return count, nil
+	defer rows.Close()
+
+	var companies []Company
+
+	for rows.Next() {
+		var company Company
+		err := rows.Scan(&company.ID, &company.CompanyName, &company.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		companies = append(companies, company)
+	}
+
+	return companies, nil
 }
 
 func GetCompanyById(userId *int64) (*Company, error) {

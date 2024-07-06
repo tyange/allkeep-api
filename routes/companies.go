@@ -22,35 +22,27 @@ func getCompaniesByUserId(context *gin.Context) {
 		pageNum = 1
 	}
 
-	data, err := models.GetAllCompanyByUserId(&userId, &pageSize, &pageNum)
+	data, err := models.GetCompaniesByUserIdWithPage(&userId, &pageSize, &pageNum)
 	if err != nil {
 		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch companies. Try again later."})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "get all companies by user.", "data": *data})
+	context.JSON(http.StatusOK, gin.H{"message": "get companies by user with page.", "data": *data})
 }
 
-func getTotalPageCount(context *gin.Context) {
+func getAllCompaniesByUserId(context *gin.Context) {
 	userId := context.GetInt64("userId")
 
-	pageSize, err := strconv.ParseInt(context.Param("pageSize"), 10, 64)
-
+	companies, err := models.GetCompaniesByUserId(&userId)
 	if err != nil {
 		fmt.Println(err)
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse page size."})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch companies. Try again later."})
 		return
 	}
 
-	count, err := models.GetCompanyCountByUserId(&userId)
-	if err != nil {
-		fmt.Println(err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch company count. Try again later."})
-		return
-	}
-
-	context.JSON(http.StatusOK, gin.H{"message": "get company count by user.", "totalPageCount": (count / pageSize) + 1})
+	context.JSON(http.StatusOK, gin.H{"message": "get all companies by user.", "companies": companies})
 }
 
 func createCompany(context *gin.Context) {
