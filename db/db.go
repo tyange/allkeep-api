@@ -40,11 +40,12 @@ func createTables() {
 	createWorksTable := `
 	CREATE TABLE IF NOT EXISTS works (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		company_id INTEGER NOT NULL,
 		company_name TEXT NOT NULL,
-		start_at TEXT NOT NULL,
 		working_time INTEGER NOT NULL,
+		start_at TEXT,
 		done_at TEXT,
-		user_id INTEGER
+		user_id INTEGER NOT NULL
 	)
 	`
 
