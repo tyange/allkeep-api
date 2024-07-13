@@ -45,6 +45,8 @@ func createTables() {
 		working_time INTEGER NOT NULL,
 		start_at TEXT,
 		done_at TEXT,
+		pause_at TEXT,
+		is_pause INTEGER,
 		user_id INTEGER NOT NULL
 	)
 	`

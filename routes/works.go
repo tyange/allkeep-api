@@ -34,6 +34,7 @@ func createWork(context *gin.Context) {
 	// auth middleware에서 만든 "userId" 데이터를 사용.
 	userId := context.GetInt64("userId")
 	work.UserID = int64(userId)
+	work.IsPause = false
 
 	err = work.Save()
 
