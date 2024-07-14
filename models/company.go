@@ -94,9 +94,9 @@ func GetCompaniesByUserId(userId *int64) ([]Company, error) {
 	return companies, nil
 }
 
-func GetCompanyById(userId *int64) (*Company, error) {
+func GetCompanyById(companyId *int64) (*Company, error) {
 	query := `SELECT * FROM companies WHERE id = ?`
-	row := db.DB.QueryRow(query, userId)
+	row := db.DB.QueryRow(query, companyId)
 
 	var company Company
 	err := row.Scan(&company.ID, &company.CompanyName, &company.UserID)

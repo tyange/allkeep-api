@@ -43,11 +43,13 @@ func createTables() {
 		company_id INTEGER NOT NULL,
 		company_name TEXT NOT NULL,
 		working_time INTEGER NOT NULL,
-		start_at TEXT,
-		done_at TEXT,
-		pause_at TEXT,
+		start_at DATETIME,
+		done_at DATETIME,
+		pause_at DATETIME,
 		is_pause INTEGER,
-		user_id INTEGER NOT NULL
+		user_id INTEGER,
+		FOREIGN KEY (company_id) REFERENCES companies(id),
+		FOREIGN KEY (user_id) REFERENCES users(id)
 	)
 	`
 
@@ -61,7 +63,8 @@ func createTables() {
 	CREATE TABLE IF NOT EXISTS companies (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		company_name TEXT NOT NULL,
-		user_id INTEGER NOT NULL
+		user_id INTEGER NOT NULL,
+		FOREIGN KEY (user_id) REFERENCES users(id)
 	)
 	`
 

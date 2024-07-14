@@ -112,3 +112,41 @@ func GetAllWorksByUserId(userId *int64) ([]Work, error) {
 
 	return works, nil
 }
+
+func GetWorkById(id *int64) (*Work, error) {
+	query := `SELECT * FROM works WHERE id = ?`
+	row := db.DB.QueryRow(query, id)
+
+	var work Work
+	err := row.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &work, nil
+}
+
+func (work Work) Update() error {
+	query := `
+	UPDATE works
+	SET company_id = ?,
+		company_name = ?,
+		working_time = ?,
+		start_at = ?,
+		done_at = ?,
+		pause_at = ?,
+		is_pause = ?,
+		user_id = ?
+	WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(work.ID)
+
+	return err
+}

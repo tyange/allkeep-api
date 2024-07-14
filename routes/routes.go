@@ -14,6 +14,7 @@ func RegisterRoutes(server *gin.Engine) {
 	work.Use(middlewares.Authenticate)
 	work.GET("/all", getWorksByUserId)
 	work.POST("/create", createWork)
+	work.PUT("/:id", updateWork)
 
 	// TODO: get user info
 	// TODO: edit user info

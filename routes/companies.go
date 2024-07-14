@@ -106,7 +106,7 @@ func updateCompany(context *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not update the event. Try again later."})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not update the company. Try again later."})
 		return
 	}
 
