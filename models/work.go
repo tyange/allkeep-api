@@ -89,9 +89,9 @@ func GetAllWorksByUserId(userId *int64) ([]Work, error) {
 	return works, nil
 }
 
-func GetWorkById(id *int64) (*Work, error) {
+func GetWorkById(workId *int64) (*Work, error) {
 	query := `SELECT * FROM works WHERE id = ?`
-	row := db.DB.QueryRow(query, id)
+	row := db.DB.QueryRow(query, workId)
 
 	var work Work
 	err := row.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.UserID)
@@ -100,6 +100,25 @@ func GetWorkById(id *int64) (*Work, error) {
 	}
 
 	return &work, nil
+}
+
+func UpdateWorkForStart(workId *int64, startAt *time.Time, doneAt *time.Time) error {
+	query := `
+	UPDATE works
+	SET start_at = ?,
+		done_at = ?
+	WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(startAt, doneAt, &workId)
+
+	return err
 }
 
 func (work Work) Update() error {
