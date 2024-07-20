@@ -140,6 +140,25 @@ func UpdateWorkForPause(workId *int64, pauseAt *time.Time) error {
 	return err
 }
 
+func UpdateWorkForRestart(workId *int64, doneAt *time.Time) error {
+	query := `
+	UPDATE works
+	SET done_at = ?,
+		is_pause = ?
+	WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(doneAt, false, &workId)
+
+	return err
+}
+
 func (work Work) Update() error {
 	query := `
 	UPDATE works
