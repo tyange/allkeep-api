@@ -15,6 +15,10 @@ type WorkStartBody struct {
 	DoneAt  *time.Time `json:"done_at"`
 }
 
+type WorkPauseBody struct {
+	PauseAt *time.Time `json:"pause_at"`
+}
+
 func getWorksByUserId(context *gin.Context) {
 	userId := context.GetInt64("userId")
 
@@ -136,6 +140,50 @@ func workStart(context *gin.Context) {
 	}
 
 	err = models.UpdateWorkForStart(&workId, workStartBody.StartAt, workStartBody.DoneAt)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not update the work. Try again later."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Work updated successfully!"})
+}
+
+func workPause(context *gin.Context) {
+	workId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse work id."})
+		return
+	}
+
+	userId := context.GetInt64("userId")
+	work, err := models.GetWorkById(&workId)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch the work. Try again later."})
+		return
+	}
+
+	if work.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized to update work."})
+		return
+	}
+
+	var workPauseBody WorkPauseBody
+	err = context.ShouldBindBodyWithJSON(&workPauseBody)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": "could not parse request data"})
+		return
+	}
+
+	if workPauseBody.PauseAt == nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "pause_at are required"})
+		return
+	}
+
+	err = models.UpdateWorkForPause(&workId, workPauseBody.PauseAt)
 	if err != nil {
 		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not update the work. Try again later."})

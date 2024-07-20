@@ -121,6 +121,25 @@ func UpdateWorkForStart(workId *int64, startAt *time.Time, doneAt *time.Time) er
 	return err
 }
 
+func UpdateWorkForPause(workId *int64, pauseAt *time.Time) error {
+	query := `
+	UPDATE works
+	SET pause_at = ?,
+		is_pause = ?
+	WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(pauseAt, true, &workId)
+
+	return err
+}
+
 func (work Work) Update() error {
 	query := `
 	UPDATE works

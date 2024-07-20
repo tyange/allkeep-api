@@ -16,6 +16,7 @@ func RegisterRoutes(server *gin.Engine) {
 	work.POST("/create", createWork)
 	work.PUT("/:id", updateWork)
 	work.PUT("/start/:id", workStart)
+	work.PUT("/pause/:id", workPause)
 
 	// TODO: get user info
 	// TODO: edit user info
