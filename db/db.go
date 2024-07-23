@@ -47,6 +47,7 @@ func createTables() {
 		done_at DATETIME,
 		pause_at DATETIME,
 		is_pause INTEGER,
+		is_done INTEGER,
 		user_id INTEGER,
 		FOREIGN KEY (company_id) REFERENCES companies(id),
 		FOREIGN KEY (user_id) REFERENCES users(id)

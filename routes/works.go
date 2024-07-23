@@ -50,6 +50,7 @@ func createWork(context *gin.Context) {
 	userId := context.GetInt64("userId")
 	work.UserID = int64(userId)
 	work.IsPause = false
+	work.IsDone = false
 
 	err = work.Save()
 

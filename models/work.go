@@ -18,6 +18,7 @@ type Work struct {
 	DoneAt      *time.Time `json:"done_at"`
 	PauseAt     *time.Time `json:"pause_at"`
 	IsPause     bool       `json:"is_pause"`
+	IsDone      bool       `json:"is_done"`
 	UserID      int64      `json:"user_id"`
 }
 
@@ -41,8 +42,8 @@ func (w *Work) Save() error {
 	}
 
 	query := `
-	INSERT INTO works(company_id, company_name, working_time, is_pause, user_id)
-	VALUES (?, ?, ?, ?, ?)
+	INSERT INTO works(company_id, company_name, working_time, is_pause, is_done, user_id)
+	VALUES (?, ?, ?, ?, ?, ?)
 	`
 
 	stmt, err := db.DB.Prepare(query)
@@ -53,7 +54,7 @@ func (w *Work) Save() error {
 
 	defer stmt.Close()
 
-	result, err := stmt.Exec(w.CompanyID, w.CompanyName, w.WorkingTime, w.IsPause, w.UserID)
+	result, err := stmt.Exec(w.CompanyID, w.CompanyName, w.WorkingTime, w.IsPause, w.IsDone, w.UserID)
 
 	if err != nil {
 		return err
@@ -78,7 +79,7 @@ func GetAllWorksByUserId(userId *int64) ([]Work, error) {
 
 	for rows.Next() {
 		var work Work
-		err := rows.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.UserID)
+		err := rows.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.IsDone, &work.UserID)
 		if err != nil {
 			return nil, err
 		}
@@ -94,7 +95,7 @@ func GetWorkById(workId *int64) (*Work, error) {
 	row := db.DB.QueryRow(query, workId)
 
 	var work Work
-	err := row.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.UserID)
+	err := row.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.IsDone, &work.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -155,6 +156,24 @@ func UpdateWorkForRestart(workId *int64, doneAt *time.Time) error {
 	defer stmt.Close()
 
 	_, err = stmt.Exec(doneAt, false, &workId)
+
+	return err
+}
+
+func UpdateWorkForDone(workId *int64) error {
+	query := `
+	UPDATE works
+	SET is_done = ?
+	WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(true, &workId)
 
 	return err
 }
