@@ -93,6 +93,29 @@ func GetAllWorksByUserId(userId *int64) ([]Work, error) {
 	return works, nil
 }
 
+func GetAllIncompleteWorksByUserId(userId *int64) ([]Work, error) {
+	query := "SELECT * FROM works WHERE user_id = ? AND is_done = false ORDER BY created_at DESC"
+	rows, err := db.DB.Query(query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var works []Work
+
+	for rows.Next() {
+		var work Work
+		err := rows.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.IsDone, &work.UserID, &work.CreatedAt, &work.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		works = append(works, work)
+	}
+
+	return works, nil
+}
+
 func GetWorkById(workId *int64) (*Work, error) {
 	query := `SELECT * FROM works WHERE id = ?`
 	row := db.DB.QueryRow(query, workId)

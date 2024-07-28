@@ -13,6 +13,7 @@ func RegisterRoutes(server *gin.Engine) {
 	work := server.Group("/works")
 	work.Use(middlewares.Authenticate)
 	work.GET("/all", getWorksByUserId)
+	work.GET("/all-incomplete", getIncompleteWorksByUserId)
 	work.POST("/create", createWork)
 	work.PUT("/:id", updateWork)
 	work.PUT("/start/:id", workStart)
