@@ -71,7 +71,7 @@ func (w *Work) Save() error {
 }
 
 func GetAllWorksByUserId(userId *int64) ([]Work, error) {
-	query := "SELECT * FROM works WHERE user_id = ?"
+	query := "SELECT * FROM works WHERE user_id = ? ORDER BY created_at DESC"
 	rows, err := db.DB.Query(query, userId)
 	if err != nil {
 		return nil, err

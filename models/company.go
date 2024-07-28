@@ -45,7 +45,7 @@ func (c *Company) Save() error {
 
 func GetCompaniesByUserIdWithPage(userId *int64, pageSize *int64, pageNum *int64) (*AllCompanyResponseData, error) {
 	offset := (*pageNum - 1) * *pageSize
-	companiesQuery := "SELECT * FROM companies WHERE user_id = ? LIMIT ? OFFSET ?"
+	companiesQuery := "SELECT * FROM companies WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
 	rows, err := db.DB.Query(companiesQuery, userId, pageSize, offset)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func GetCompaniesByUserIdWithPage(userId *int64, pageSize *int64, pageNum *int64
 }
 
 func GetCompaniesByUserId(userId *int64) ([]Company, error) {
-	query := "SELECT * FROM companies WHERE user_id = ?"
+	query := "SELECT * FROM companies WHERE user_id = ? ORDER BY created_at DESC"
 	rows, err := db.DB.Query(query, userId)
 	if err != nil {
 		return nil, err
