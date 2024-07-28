@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"time"
 
 	"github.com/tyange/white-shadow-api/db"
 	"github.com/tyange/white-shadow-api/utils"
@@ -14,7 +15,7 @@ type User struct {
 }
 
 func (u *User) Save() error {
-	query := `INSERT INTO users(email, password) VALUES (?, ?)`
+	query := `INSERT INTO users(email, password, created_at) VALUES (?, ?, ?)`
 	stmt, err := db.DB.Prepare(query)
 
 	if err != nil {
@@ -29,7 +30,8 @@ func (u *User) Save() error {
 		return err
 	}
 
-	result, err := stmt.Exec(u.Email, hashedPassword)
+	currentTime := time.Now()
+	result, err := stmt.Exec(u.Email, hashedPassword, currentTime)
 
 	if err != nil {
 		return err
@@ -43,7 +45,7 @@ func (u *User) Save() error {
 }
 
 func (u *User) SaveWithoutPassword() error {
-	query := `INSERT INTO users(email) VALUES (?)`
+	query := `INSERT INTO users(email, created_at) VALUES (?)`
 	stmt, err := db.DB.Prepare(query)
 
 	if err != nil {
@@ -52,7 +54,8 @@ func (u *User) SaveWithoutPassword() error {
 
 	defer stmt.Close()
 
-	result, err := stmt.Exec(u.Email)
+	currentTime := time.Now()
+	result, err := stmt.Exec(u.Email, currentTime)
 
 	if err != nil {
 		return err

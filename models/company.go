@@ -1,13 +1,17 @@
 package models
 
 import (
+	"time"
+
 	"github.com/tyange/white-shadow-api/db"
 )
 
 type Company struct {
-	ID          int64  `json:"id"`
-	CompanyName string `json:"company_name"`
-	UserID      int64  `json:"user_id"`
+	ID          int64      `json:"id"`
+	CompanyName string     `json:"company_name"`
+	UserID      int64      `json:"user_id"`
+	CreatedAt   *time.Time `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
 }
 
 type AllCompanyResponseData struct {
@@ -16,7 +20,7 @@ type AllCompanyResponseData struct {
 }
 
 func (c *Company) Save() error {
-	query := `INSERT INTO companies(company_name, user_id) VALUES (?, ?)`
+	query := `INSERT INTO companies(company_name, user_id, created_at) VALUES (?, ?, ?)`
 	stmt, err := db.DB.Prepare(query)
 
 	if err != nil {
@@ -25,7 +29,8 @@ func (c *Company) Save() error {
 
 	defer stmt.Close()
 
-	result, err := stmt.Exec(c.CompanyName, c.UserID)
+	currentTime := time.Now()
+	result, err := stmt.Exec(c.CompanyName, c.UserID, currentTime)
 
 	if err != nil {
 		return err
@@ -60,7 +65,7 @@ func GetCompaniesByUserIdWithPage(userId *int64, pageSize *int64, pageNum *int64
 
 	for rows.Next() {
 		var company Company
-		err := rows.Scan(&company.ID, &company.CompanyName, &company.UserID)
+		err := rows.Scan(&company.ID, &company.CompanyName, &company.UserID, &company.CreatedAt, &company.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -83,7 +88,7 @@ func GetCompaniesByUserId(userId *int64) ([]Company, error) {
 
 	for rows.Next() {
 		var company Company
-		err := rows.Scan(&company.ID, &company.CompanyName, &company.UserID)
+		err := rows.Scan(&company.ID, &company.CompanyName, &company.UserID, &company.CreatedAt, &company.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -99,7 +104,7 @@ func GetCompanyById(companyId *int64) (*Company, error) {
 	row := db.DB.QueryRow(query, companyId)
 
 	var company Company
-	err := row.Scan(&company.ID, &company.CompanyName, &company.UserID)
+	err := row.Scan(&company.ID, &company.CompanyName, &company.UserID, &company.CreatedAt, &company.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +115,7 @@ func GetCompanyById(companyId *int64) (*Company, error) {
 func (company Company) Update() error {
 	query := `
 	UPDATE companies
-	SET company_name = ?
+	SET company_name = ?, updated_at = ?
 	WHERE id = ?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -121,7 +126,8 @@ func (company Company) Update() error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(company.CompanyName, company.ID)
+	currentTime := time.Now()
+	_, err = stmt.Exec(company.CompanyName, currentTime, company.ID)
 	return err
 }
 

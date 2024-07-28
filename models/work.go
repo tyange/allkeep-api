@@ -20,6 +20,8 @@ type Work struct {
 	IsPause     bool       `json:"is_pause"`
 	IsDone      bool       `json:"is_done"`
 	UserID      int64      `json:"user_id"`
+	CreatedAt   *time.Time `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
 }
 
 type DuplicateCompanyIDError struct {
@@ -42,8 +44,8 @@ func (w *Work) Save() error {
 	}
 
 	query := `
-	INSERT INTO works(company_id, company_name, working_time, is_pause, is_done, user_id)
-	VALUES (?, ?, ?, ?, ?, ?)
+	INSERT INTO works(company_id, company_name, working_time, is_pause, is_done, user_id, created_at)
+	VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
 	stmt, err := db.DB.Prepare(query)
@@ -54,7 +56,8 @@ func (w *Work) Save() error {
 
 	defer stmt.Close()
 
-	result, err := stmt.Exec(w.CompanyID, w.CompanyName, w.WorkingTime, w.IsPause, w.IsDone, w.UserID)
+	currentTime := time.Now()
+	result, err := stmt.Exec(w.CompanyID, w.CompanyName, w.WorkingTime, w.IsPause, w.IsDone, w.UserID, currentTime)
 
 	if err != nil {
 		return err
@@ -79,7 +82,7 @@ func GetAllWorksByUserId(userId *int64) ([]Work, error) {
 
 	for rows.Next() {
 		var work Work
-		err := rows.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.IsDone, &work.UserID)
+		err := rows.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.IsDone, &work.UserID, &work.CreatedAt, &work.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -95,7 +98,7 @@ func GetWorkById(workId *int64) (*Work, error) {
 	row := db.DB.QueryRow(query, workId)
 
 	var work Work
-	err := row.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.IsDone, &work.UserID)
+	err := row.Scan(&work.ID, &work.CompanyID, &work.CompanyName, &work.WorkingTime, &work.StartAt, &work.DoneAt, &work.PauseAt, &work.IsPause, &work.IsDone, &work.UserID, &work.CreatedAt, &work.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +110,8 @@ func UpdateWorkForStart(workId *int64, startAt *time.Time, doneAt *time.Time) er
 	query := `
 	UPDATE works
 	SET start_at = ?,
-		done_at = ?
+		done_at = ?,
+		updated_at = ?
 	WHERE id = ?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -117,7 +121,8 @@ func UpdateWorkForStart(workId *int64, startAt *time.Time, doneAt *time.Time) er
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(startAt, doneAt, &workId)
+	currentTime := time.Now()
+	_, err = stmt.Exec(startAt, doneAt, currentTime, &workId)
 
 	return err
 }
@@ -126,7 +131,8 @@ func UpdateWorkForPause(workId *int64, pauseAt *time.Time) error {
 	query := `
 	UPDATE works
 	SET pause_at = ?,
-		is_pause = ?
+		is_pause = ?,
+		updated_at = ?
 	WHERE id = ?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -136,7 +142,8 @@ func UpdateWorkForPause(workId *int64, pauseAt *time.Time) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(pauseAt, true, &workId)
+	currentTime := time.Now()
+	_, err = stmt.Exec(pauseAt, true, currentTime, &workId)
 
 	return err
 }
@@ -145,7 +152,8 @@ func UpdateWorkForRestart(workId *int64, doneAt *time.Time) error {
 	query := `
 	UPDATE works
 	SET done_at = ?,
-		is_pause = ?
+		is_pause = ?,
+		updated_at = ?
 	WHERE id = ?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -155,7 +163,8 @@ func UpdateWorkForRestart(workId *int64, doneAt *time.Time) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(doneAt, false, &workId)
+	currentTime := time.Now()
+	_, err = stmt.Exec(doneAt, false, currentTime, &workId)
 
 	return err
 }
@@ -163,7 +172,8 @@ func UpdateWorkForRestart(workId *int64, doneAt *time.Time) error {
 func UpdateWorkForDone(workId *int64) error {
 	query := `
 	UPDATE works
-	SET is_done = ?
+	SET is_done = ?,
+		updated_at = ?
 	WHERE id = ?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -173,7 +183,8 @@ func UpdateWorkForDone(workId *int64) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(true, &workId)
+	currentTime := time.Now()
+	_, err = stmt.Exec(true, currentTime, &workId)
 
 	return err
 }
@@ -188,7 +199,8 @@ func (work Work) Update() error {
 		done_at = ?,
 		pause_at = ?,
 		is_pause = ?,
-		user_id = ?
+		user_id = ?,
+		updated_at = ?
 	WHERE id = ?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -198,7 +210,8 @@ func (work Work) Update() error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(work.CompanyID, work.CompanyName, work.WorkingTime, work.StartAt, work.DoneAt, work.PauseAt, work.IsPause, work.UserID, work.ID)
+	currentTime := time.Now()
+	_, err = stmt.Exec(work.CompanyID, work.CompanyName, work.WorkingTime, work.StartAt, work.DoneAt, work.PauseAt, work.IsPause, work.UserID, currentTime, work.ID)
 
 	return err
 }
