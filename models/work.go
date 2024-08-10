@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/tyange/white-shadow-api/db"
@@ -24,25 +23,7 @@ type Work struct {
 	UpdatedAt   *time.Time `json:"updated_at"`
 }
 
-type DuplicateCompanyIDError struct {
-	CompanyID int64
-}
-
-func (e *DuplicateCompanyIDError) Error() string {
-	return fmt.Sprintf("데이터가 이미 존재합니다: company_id %d", e.CompanyID)
-}
-
 func (w *Work) Save() error {
-	checkQuery := "SELECT COUNT(*) FROM works WHERE company_id = ?"
-	var count int
-	err := db.DB.QueryRow(checkQuery, w.CompanyID).Scan(&count)
-	if err != nil {
-		return err
-	}
-	if count > 0 {
-		return &DuplicateCompanyIDError{CompanyID: w.CompanyID}
-	}
-
 	query := `
 	INSERT INTO works(company_id, company_name, working_time, is_pause, is_done, user_id, created_at)
 	VALUES (?, ?, ?, ?, ?, ?, ?)

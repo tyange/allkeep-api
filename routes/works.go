@@ -72,16 +72,9 @@ func createWork(context *gin.Context) {
 	err = work.Save()
 
 	if err != nil {
-		switch err.(type) {
-		case *models.DuplicateCompanyIDError:
-			fmt.Println(err)
-			context.JSON(http.StatusConflict, gin.H{"message": "Company duplicated."})
-			return
-		default:
-			fmt.Println(err)
-			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create work. Try again later."})
-			return
-		}
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create work. Try again later."})
+		return
 	}
 
 	context.JSON(http.StatusCreated, gin.H{"message": "work created.", "work": work})
